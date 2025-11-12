@@ -9,7 +9,8 @@ import lombok.Data;
 @Data
 public class Employee {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "UUID")
+    @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
     private String name;

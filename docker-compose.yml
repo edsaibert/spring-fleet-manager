@@ -1,37 +1,34 @@
-version: "3.8"
+version: '3.8'
 
 services:
   db:
-    image: postgres:15
+    image: postgres:16
     container_name: fleetmanager-db
     environment:
       POSTGRES_DB: fleetmanager
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - fleet-network
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   app:
     build: .
     container_name: fleetmanager-app
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/fleetmanager
+      SPRING_DATASOURCE_URL: jdbc:postgresql://fleetmanager-db:5432/fleetmanager
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
     ports:
       - "8080:8080"
-    depends_on:
-      - db
-    networks:
-      - fleet-network
-
-networks:
-  fleet-network:
 
 volumes:
-  postgres_data:
+  db_data:
