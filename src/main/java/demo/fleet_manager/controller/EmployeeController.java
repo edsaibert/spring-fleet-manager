@@ -1,8 +1,12 @@
 package demo.fleet_manager.controller;
 
 import demo.fleet_manager.entity.Employee;
+import demo.fleet_manager.dtos.EmployeeDTO;
 import demo.fleet_manager.repository.EmployeeRepository;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,8 +27,10 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public Employee create(@RequestBody Employee newEmployee) {
-        return repository.save(newEmployee);
+    public ResponseEntity<Employee> create(@RequestBody EmployeeDTO newEmployeeDTO) {
+        var employeeModel = new Employee();
+        BeanUtils.copyProperties(newEmployeeDTO, employeeModel);
+        return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(employeeModel));
     }
 
     @GetMapping("/{id}")
