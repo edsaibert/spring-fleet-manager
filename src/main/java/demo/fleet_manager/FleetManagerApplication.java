@@ -1,4 +1,4 @@
-package demo.fleet_manager.repository.user;
+package demo.fleet_manager;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
